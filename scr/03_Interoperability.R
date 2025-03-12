@@ -49,3 +49,62 @@ cortex.sce <- as.SingleCellExperiment(cortex.seurat)
 # convert the SingleCellExperiment to AnnData
 cortex.ad <- SCE2AnnData(cortex.sce)
 unique(cortex.ad$obs$cell_type)
+
+# -------------------------------------------------------------------------
+# sample function to conver a Seurat spatial object into a spatial experiment object
+
+seurat_to_spe <- function(seu, sample_id, img_id) {
+  ## Convert to SCE
+  sce <- Seurat::as.SingleCellExperiment(seu)
+  
+  ## Extract spatial coordinates
+  spatialCoords <- GetTissueCoordinates(seu)[, 1:2] %>%
+    as.matrix(.)
+  # spatialCoords <- as.matrix(
+  #   seu@images[[img_id]]@coordinates[, c("imagecol", "imagerow")])
+  
+  ## Extract and process image data
+  img <- SpatialExperiment::SpatialImage(
+    x = as.raster(seu@images[[img_id]]@image))
+  
+  imgData <- DataFrame(
+    sample_id = sample_id,
+    image_id = img_id,
+    data = I(list(img)),
+    scaleFactor = seu@images[[img_id]]@scale.factors$lowres)
+  
+  # Convert to SpatialExperiment
+  spe <- SpatialExperiment(
+    assays = assays(sce),
+    rowData = rowData(sce),
+    colData = colData(sce),
+    metadata = metadata(sce),
+    reducedDims = reducedDims(sce),
+    altExps = altExps(sce),
+    sample_id = sample_id,
+    spatialCoords = spatialCoords,
+    imgData = imgData
+  )
+  # indicate all spots are on the tissue
+  spe$in_tissue <- 1
+  spe$sample_id <- sample_id
+  # Return Spatial Experiment object
+  spe
+}
+
+# test
+# SeuratData::InstallData(ds = "stxBrain")
+se1 <- SeuratData::LoadData(ds = "stxBrain", type = "posterior1")
+# sample plot
+SpatialFeaturePlot(se1,features = "nCount_Spatial")
+
+# conver the object
+spe <- seurat_to_spe(seu = se1, sample_id = "posterior1", img_id = "posterior1")
+
+# sample plot
+plotSpots(spe,point_size = 0.05)
+plotSpots(spe,point_size = 0.05,x_coord = "y",y_coord = "x")
+
+plotSpots(spe,point_size = 0.05,annotate = "nCount_Spatial",x_coord = "y",y_coord = "x") + 
+  scale_color_gradientn(colors=pals::jet())
+
