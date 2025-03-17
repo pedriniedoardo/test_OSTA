@@ -1,8 +1,8 @@
 # -------------------------------------------------------------------------
 # 3.2.1 Calling Python
 # from the command line
-# conda create -n scvi python=3.12
-# conda activate scvi
+# micromamba create -n env_scvi -c conda-forge conda python=3.12 scanpy mkl-include r-base r-essentials r-reticulate
+# micromamba activate scvi
 # python -m pip install scvi-tools
 
 # python version ----------------------------------------------------------
