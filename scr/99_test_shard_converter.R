@@ -1,7 +1,7 @@
 # libraries ---------------------------------------------------------------
 library(schard)
 library(tidyverse)
-library(loupeR)
+# library(loupeR)
 
 # download the sample files -----------------------------------------------
 # download.file('https://datasets.cellxgene.cziscience.com/c5ac5c36-f60c-4680-8018-2d6cb65c0a37.h5ad','../../data/vis.heart.h5ad')
@@ -16,7 +16,12 @@ ba16.sce <- schard::h5ad2sce('../../data/ba16.h5ad')
 snhx <- schard::h5ad2seurat('../../data/sn.heart.h5ad')
 
 # load all visium samples as single Seurat object
-visx <- schard::h5ad2seurat_spatial('../../data/vis.heart.h5ad')
+visx01 <- schard::h5ad2seurat_spatial('../../data/vis.heart.h5ad')
+visx02 <- schard::h5ad2seurat_spatial('../../data/vis.heart.h5ad',use.raw = T)
+
+# see the difference in loading with or without raw parameter
+visx01[["Spatial"]]$counts
+visx02[["Spatial"]]$counts
 
 # or load as list of Seurat objects (per slide
 visl <- schard::h5ad2seurat_spatial('../../data/vis.heart.h5ad',simplify = FALSE)
