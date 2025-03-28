@@ -18,6 +18,8 @@ library(tidyverse)
 library(sceasy)
 library(reticulate)
 library(zellkonverter)
+library(SpatialExperiment)
+library(ggspavis)
 
 # sample vigette ----------------------------------------------------------
 
