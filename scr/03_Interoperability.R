@@ -45,6 +45,11 @@ ad <- SCE2AnnData(sce, X_name="X")
 # sample conversion from anndata to as seurat object
 cortex.seurat <- sceasy::convertFormat(h5ad_path, from="anndata", to="seurat",outFile='../../out/object/cortex.rds')
 
+# try also the inverse conversion
+cortex.adata <- sceasy::convertFormat(cortex.seurat, from="seurat", to="anndata",outFile='../../out/object/cortex_sceasy.h5ad')
+# confirm the creation
+dir("../../out/object/")
+
 # convert the seurat object to SingleCellExperiment
 cortex.sce <- as.SingleCellExperiment(cortex.seurat)
 
